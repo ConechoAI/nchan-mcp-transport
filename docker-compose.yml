@@ -2,9 +2,8 @@ version: "3"
 
 services:
   nchan:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.nchan
+    image: nchan-proxy:latest
+    restart: always
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./docker/nchan.conf:/etc/nginx/conf.d/nchan.conf
@@ -12,19 +11,22 @@ services:
       - "80:80"
     environment:
       - HTTP_PORT=8000  # set default HTTP port, then nchan.conf can using 80
-    restart: always
 
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.py_demo
-    volumes:
-      - ./app/app.py:/app/app.py
+  video:
+    image: video-mcp-nchan:latest
+    restart: always
+    ports:
+      - "8000"
+    environment:
+      - VIRTUAL_HOST=video.mcp.io
+
+  demo:
+    image: demo-mcp-nchan:latest
+    restart: always
     ports:
       - "8000"
     environment:
       - VIRTUAL_HOST=notion.mcp.io,notion_user.mcp.io,httmcp.mcp.io
-    restart: always
 
   jinareader:
     extends:
