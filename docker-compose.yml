@@ -17,7 +17,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/Dockerfile.python
+      dockerfile: docker/Dockerfile.py_demo
     volumes:
       - ./app/app.py:/app/app.py
     ports:
