@@ -23,7 +23,7 @@ services:
     ports:
       - "8000"
     environment:
-      - VIRTUAL_HOST=notion.mcp.io,httmcp.mcp.io
+      - VIRTUAL_HOST=notion.mcp.io,notion_user.mcp.io,httmcp.mcp.io
     restart: always
 
   jinareader:

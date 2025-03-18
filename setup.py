@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="httmcp",
-    version="0.1.4",
+    version="0.2.0",
     author="lloydzhou",
     author_email="lloydzhou@qq.com",
     description="HTTP MCP Transport for Nchan",
@@ -25,7 +25,7 @@ setup(
     install_requires=[
         "fastapi>=0.115.11",
         "httpx>=0.27.0",
-        "openapi-httpx-client>=0.3.0",
+        "openapi-httpx-client>=0.4.1",
         "mcp>=1.3.0",
     ],
 )

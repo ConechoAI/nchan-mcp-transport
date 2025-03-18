@@ -66,9 +66,37 @@ async def create_openapi_mcp_server():
     app.include_router(server1.router)
 
     url = "https://ghfast.top/https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/notion.com/1.0.0/openapi.yaml"
-    server2 = await OpenAPIMCP.from_openapi(url, name="notion", publish_server=publish_server)
-    logger.info("Server1 started %r", server2.router.routes)
+    server2 = await OpenAPIMCP.from_openapi(
+        url,
+        name="notion",
+        publish_server=publish_server,
+        headers={"Authorization": "Bearer your_token"},
+    )
+    logger.info("Server2 started %r", server2.router.routes)
     app.include_router(server2.router)
+
+    # create a custom OpenAPIMCP with user_api_key
+    from openapiclient import OpenAPIClient
+    class NotionAPI(OpenAPIMCP):
+        def __init__(self, api: OpenAPIClient, name: str | None = None, publish_server: str | None = None, api_prefix: str = "", **settings: Any):
+            client = api.Client().__enter__()
+            super().__init__(api, client, name, publish_server, api_prefix, **settings)
+
+        async def call_tool_with_context(self, name, arguments, context):
+            # get user api key from context
+            # context.client_id
+            session_id = context.request_context.meta.session_id
+            api_key = "" # get api key from session_id
+            async with self.api.AsyncClient(headers={"Authorization": f"Bearer {api_key}"}) as client:
+                return await client(name, arguments)
+
+    api = OpenAPIClient(
+        definition="https://ghfast.top/https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/notion.com/1.0.0/openapi.yaml"
+    )
+    server3 = NotionAPI(api, name="notion_user", publish_server=publish_server)
+    logger.info("Server3 started %r", server3.router.routes)
+    app.include_router(server3.router)
+
 
 asyncio.run(create_openapi_mcp_server())
 
